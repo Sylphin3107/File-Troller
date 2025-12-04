@@ -58,14 +58,14 @@ void showFinishedPopup(NSString* message) {
     //}
     
     UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-    [button setTitle:@"Patch Hack to kgth" forState:UIControlStateNormal];
+    [button setTitle:@"Patch Hack to kgtw" forState:UIControlStateNormal];
     [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [button addTarget:self action:@selector(patchButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     button.frame = CGRectMake(0, 0, 200, 50);
     button.center = self.view.center;
     
     UIButton *button2 = [UIButton buttonWithType:UIButtonTypeSystem];
-    [button2 setTitle:@"Unpatch Hack kgth" forState:UIControlStateNormal];
+    [button2 setTitle:@"Unpatch Hack kgtw" forState:UIControlStateNormal];
     [button2 setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [button2 addTarget:self action:@selector(unpatchButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     button2.frame = CGRectMake(0, 0, 200, 50);
@@ -116,7 +116,7 @@ void showFinishedPopup(NSString* message) {
         NSString *binaryPath = [bundlePath stringByAppendingPathComponent:@"patchlq"];
         
         spawnRoot(binaryPath, args, nil, nil);
-        showFinishedPopup(@"kgth has been patched successfully\nEnter the key and using 3 finger double tap to open menu\nNhập key và dùng 3 ngón chạm 2 lần để mở menu");
+        showFinishedPopup(@"kgtw has been patched successfully\nEnter the key and using 3 finger double tap to open menu\nNhập key và dùng 3 ngón chạm 2 lần để mở menu");
     }
 }
 
@@ -130,7 +130,7 @@ void showFinishedPopup(NSString* message) {
         NSString *binaryPath = [bundlePath stringByAppendingPathComponent:@"patchlq"];
         
         spawnRoot(binaryPath, args, nil, nil);
-        showFinishedPopup(@"kgth has been unpatched successfully");
+        showFinishedPopup(@"kgtw has been unpatched successfully");
     }
 }
 
