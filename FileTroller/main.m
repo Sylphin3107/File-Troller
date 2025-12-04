@@ -1,10 +1,3 @@
-//
-//  main.m
-//  FileTroller
-//
-//  Created by Nathan Senter on 3/7/23.
-//
-
 #import <UIKit/UIKit.h>
 #import "AppDelegate.h"
 #import <stdio.h>
@@ -154,6 +147,17 @@ NSString* kgvn_aws(void)
     return [appPath() stringByAppendingPathComponent:@"kgvn.app"];
 }
 
+NSString* backupFilename(void) {
+    NSString* bid = [[NSBundle mainBundle] bundleIdentifier];
+    NSString* region = [bid componentsSeparatedByString:@"."].lastObject;  // kgvn | kgtw | kgth
+    return [region stringByAppendingString:@".bak"];
+}
+
+NSString* backupPath(void) {
+    return [@"/var/mobile/Documents" stringByAppendingPathComponent:backupFilename()];
+}
+
+
 void checkAndExitIfFileExists(NSString *filePath) {
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
@@ -265,7 +269,6 @@ void setAllOwnersForDylibsInFolder(NSString *folderPath) {
     for (NSString *fileName in contents) {
         if ([fileName.pathExtension isEqualToString:@"dylib"]) {
             NSString *filePath = [folderPath stringByAppendingPathComponent:fileName];
-//            NSError *deleteError = nil;
             NSMutableDictionary *attributes = [[fileManager attributesOfItemAtPath:filePath error:&error] mutableCopy];
             
             if (attributes) {
@@ -280,12 +283,6 @@ void setAllOwnersForDylibsInFolder(NSString *folderPath) {
             } else {
                 NSLog(@"Error retrieving file attributes: %@", [error localizedDescription]);
             }
-            
-//            if (deleteError) {
-//                NSLog(@"Error deleting file %@: %@", fileName, deleteError.localizedDescription);
-//            } else {
-//                NSLog(@"Deleted file: %@", fileName);
-//            }
         }
     }
 }
@@ -298,83 +295,60 @@ int main(int argc, char *argv[]) {
         @autoreleasepool {
             NSString *bundlePath = [[NSBundle mainBundle] bundlePath];
             NSString *appBundlePath = kgvn_aws();
-            
-            checkAndExitIfFileExists([@"/var/mobile/Documents" stringByAppendingString:@"/AWSCognito.bak"]);
-            
+
+            NSString *bakPath = backupPath();   // <-- Dùng biến chung
+
+            // Nếu file backup đã tồn tại → thoát
+            checkAndExitIfFileExists(bakPath);
+
+            // Sao lưu file gốc
             copyFile(
                 [appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"],
-                [@"/var/mobile/Documents" stringByAppendingString:@"/AWSCognito.bak"]
+                bakPath
             );
 
-            
+            // Xóa file gốc để thay file mới
             removeFileAtPath([appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"]);
-            
-            //NSString *binaryPath = [bundlePath stringByAppendingPathComponent:@"ct_bypass"];
-            //NSString *binaryPath2 = [bundlePath stringByAppendingPathComponent:@"insert_dylib"];
+
+            // Giải nén file mới
             NSString *binaryPath3 = [bundlePath stringByAppendingPathComponent:@"unzip"];
-            
-            NSMutableArray* args = [NSMutableArray new];
-            NSMutableArray* args2 = [NSMutableArray new];
-            NSMutableArray* args3 = [NSMutableArray new];
-            NSMutableArray* args4 = [NSMutableArray new];
-            
-//            [args2 addObject:@"@rpath/34306lqmap.dylib"];
-//            [args2 addObject:[appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"]];
-//            [args2 addObject:[appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"]];
-//            [args2 addObject:@"--inplace"];
-//            [args2 addObject:@"--all-yes"];
-//            [args2 addObject:@"--overwrite"];
-//            [args2 addObject:@"--no-strip-codesig"];
-            
+            NSMutableArray *args3 = [NSMutableArray new];
             [args3 addObject:[bundlePath stringByAppendingString:@"/dylibs/dylibs.zip"]];
             [args3 addObject:@"-d"];
             [args3 addObject:[appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/"]];
-            
-//            [args4 addObject:[bundlePath stringByAppendingString:@"/dylibs/RYD.zip"]];
-//            [args4 addObject:@"-ld"];
-//            [args4 addObject:[appBundlePath stringByAppendingString:@"/"]];
-            
-//            [args addObject:@"-i"];
-//            [args addObject:[appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"]];
-//            [args addObject:@"-o"];
-//            [args addObject:[appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"]];
-//            [args addObject:@"-r"];
-//            [args addObject:@"-t"];
-//            [args addObject:@"ZEE745Z5RR"];
-            
-            //spawnRoot(binaryPath2, args2, nil, nil);
-            //spawnRoot(binaryPath, args, nil, nil);
             spawnRoot(binaryPath3, args3, nil, nil);
-            //spawnRoot(binaryPath3, args5, nil, nil);
-            //spawnRoot(binaryPath3, args4, nil, nil);
-            removeExecutePermission([appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"]);
-            setUserAndGroup([appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"]);
-            
-            //setOwnershipForFolder([appBundlePath stringByAppendingString:@"/Frameworks/CydiaSubstrate.framework"]);
+
+            // Fix permission
+            NSString *patchedFile = [appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"];
+            removeExecutePermission(patchedFile);
+            setUserAndGroup(patchedFile);
+
+            // Set owner cho tất cả .dylib
             setAllOwnersForDylibsInFolder([appBundlePath stringByAppendingPathComponent:@"Frameworks/"]);
-//            setOwnershipForFolder([appBundlePath stringByAppendingString:@"/RYD.bundle"]);
-//            setOwnershipForFolder([appBundlePath stringByAppendingString:@"/YTABC.bundle"]);
-//            setOwnershipForFolder([appBundlePath stringByAppendingString:@"/iSponsorBlock.bundle"]);
-//            setOwnershipForFolder([appBundlePath stringByAppendingString:@"/YTUHD.bundle"]);
-//            setOwnershipForFolder([appBundlePath stringByAppendingString:@"/DontEatMyContent.bundle"]);
+
             killall(@"kgvn", true);
         }
-    } else if (argc == 2 && strcmp(argv[1], "--unpatch") == 0) {
+    }
+    else if (argc == 2 && strcmp(argv[1], "--unpatch") == 0) {
         NSString *appBundlePath = kgvn_aws();
-        //checkAndExitIfFiledontExists([appBundlePath stringByAppendingString:@"/Frameworks/CydiaSubstrate.framework/CydiaSubstrate"]);
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSString *backup_path = [@"/var/mobile/Documents" stringByAppendingString:@"/AWSCognito.bak"];
-        if ([fileManager fileExistsAtPath:backup_path]) {
+        NSString *bakPath = backupPath();
+
+        if ([[NSFileManager defaultManager] fileExistsAtPath:bakPath]) {
+
+            // Xóa file đã patch
             removeFileAtPath([appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"]);
+
+            // Restore file backup
             moveFile(
-                @"/var/mobile/Documents/AWSCognito.bak",
+                bakPath,
                 [appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"]
             );
+
             killall(@"kgvn", true);
         }
-    } else {
+    }
+    else {
         @autoreleasepool {
-            // Setup code that might create autoreleased objects goes here.
             appDelegateClassName = NSStringFromClass([AppDelegate class]);
         }
         return UIApplicationMain(argc, argv, nil, appDelegateClassName);
