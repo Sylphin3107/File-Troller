@@ -87,7 +87,7 @@ void showFinishedPopup(NSString* message) {
 
 - (void)showCreditsPopup {
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Credits/Tweaks"
-                                                                             message:@"Creator of this patcher:\nNathan\n\nCheat by:\nLittle 34306\n(Huy Nguyen)"
+                                                                             message:@"Creator of this patcher:\nNathan\n\nCheat by:\nSylphin3107\n(Trần Quang Vinh)"
                                                                       preferredStyle:UIAlertControllerStyleAlert];
 
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK"
@@ -116,7 +116,7 @@ void showFinishedPopup(NSString* message) {
         NSString *binaryPath = [bundlePath stringByAppendingPathComponent:@"patchlq"];
         
         spawnRoot(binaryPath, args, nil, nil);
-        showFinishedPopup(@"kgvn has been patched successfully\nEnter the key and using 3 finger double tap to oen menu\nNhập key và dùng 3 ngón chạm 2 lần để mở menu");
+        showFinishedPopup(@"kgvn has been patched successfully\nEnter the key and using 3 finger double tap to open menu\nNhập key và dùng 3 ngón chạm 2 lần để mở menu");
     }
 }
 
