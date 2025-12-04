@@ -1,0 +1,48 @@
+name: Build iOS TIPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout source
+    - uses: actions/checkout@v4
+
+    - name: Install ldid
+      run: brew install ldid
+
+    - name: Install zip / unzip
+      run: brew install zip unzip
+
+    - name: Make build.sh executable
+      run: chmod +x build.sh
+
+    - name: Build Xcode project
+      run: |
+        # Xcode build (không ký)
+        xcodebuild \
+          -project FileTroller.xcodeproj \
+          -scheme FileTroller \
+          -configuration Release \
+          -sdk iphoneos \
+          BUILD_DIR="build/" \
+          CODE_SIGNING_ALLOWED="NO" \
+          CODE_SIGNING_REQUIRED="NO" \
+          CODE_SIGN_IDENTITY=""
+      
+    - name: Run build.sh (custom packaging)
+      run: |
+        chmod +x build.sh
+        ./build.sh
+
+    - name: Upload TIPA artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: FileTroller-tipa
+        path: build/Release-iphoneos/patchlq.tipa
