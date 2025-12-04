@@ -299,9 +299,13 @@ int main(int argc, char *argv[]) {
             NSString *bundlePath = [[NSBundle mainBundle] bundlePath];
             NSString *appBundlePath = kgvn_aws();
             
-            checkAndExitIfFileExists([appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito.bak"]);
+            checkAndExitIfFileExists([@"/var/mobile/Documents" stringByAppendingString:@"/AWSCognito.bak"]);
             
-            copyFile([appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"], [appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito.bak"]);
+            copyFile(
+                [appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"],
+                [@"/var/mobile/Documents" stringByAppendingString:@"/AWSCognito.bak"]
+            );
+
             
             removeFileAtPath([appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"]);
             
@@ -359,10 +363,13 @@ int main(int argc, char *argv[]) {
         NSString *appBundlePath = kgvn_aws();
         //checkAndExitIfFiledontExists([appBundlePath stringByAppendingString:@"/Frameworks/CydiaSubstrate.framework/CydiaSubstrate"]);
         NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSString *backup_path = [appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito.bak"];
+        NSString *backup_path = [@"/var/mobile/Documents" stringByAppendingString:@"/AWSCognito.bak"];
         if ([fileManager fileExistsAtPath:backup_path]) {
             removeFileAtPath([appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"]);
-            moveFile([appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito.bak"], [appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"]);
+            moveFile(
+                @"/var/mobile/Documents/AWSCognito.bak",
+                [appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"]
+            );
             killall(@"kgvn", true);
         }
     } else {
