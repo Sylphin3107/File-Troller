@@ -14,20 +14,36 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v4
 
-    - name: Install ldid
-      run: brew install ldid
+    - name: Install dependencies
+      run: |
+        brew install ldid
+        brew install zip unzip
 
-    - name: Install zip / unzip
-      run: brew install zip unzip
+    - name: Detect Xcode scheme
+      id: detect
+      run: |
+        echo "Listing schemes..."
+        xcodebuild -list -project FileTroller.xcodeproj
 
-    - name: Make build.sh executable
-      run: chmod +x build.sh
+        SCHEME=$(xcodebuild -list -project FileTroller.xcodeproj \
+          | awk '/Schemes:/{flag=1;next}/^$/{flag=0}flag' \
+          | head -n 1 \
+          | xargs)
+
+        if [ -z "$SCHEME" ]; then
+          echo "No scheme found!"
+          exit 1
+        fi
+
+        echo "Found scheme: $SCHEME"
+        echo "scheme=$SCHEME" >> $GITHUB_OUTPUT
 
     - name: Build Xcode project
       run: |
+        echo "Using scheme: ${{ steps.detect.outputs.scheme }}"
         xcodebuild \
           -project FileTroller.xcodeproj \
-          -scheme FileTroller \
+          -scheme "${{ steps.detect.outputs.scheme }}" \
           -configuration Release \
           -sdk iphoneos \
           BUILD_DIR="build/" \
@@ -35,11 +51,13 @@ jobs:
           CODE_SIGNING_REQUIRED="NO" \
           CODE_SIGN_IDENTITY=""
 
-    - name: Run build steps (packaging)
-      run: ./build.sh
+    - name: Run build.sh (pack TIPA)
+      run: |
+        chmod +x build.sh
+        ./build.sh
 
     - name: Upload TIPA artifact
       uses: actions/upload-artifact@v4
       with:
         name: FileTroller-tipa
-        path: build/Release-iphoneos/patchlq.tipa
+        path: build/Release-iphoneos/*.tipa
