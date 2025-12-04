@@ -370,7 +370,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = FileTroller/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "LQ Patch";
+				INFOPLIST_KEY_CFBundleDisplayName = "AoV Patch";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -409,7 +409,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = FileTroller/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "LQ Patch";
+				INFOPLIST_KEY_CFBundleDisplayName = "AoV Patch";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
