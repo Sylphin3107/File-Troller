@@ -148,9 +148,7 @@ NSString* kgvn_aws(void)
 }
 
 NSString* backupFilename(void) {
-    NSString* bid = [[NSBundle mainBundle] bundleIdentifier];
-    NSString* region = [bid componentsSeparatedByString:@"."].lastObject;  // kgvn | kgtw | kgth
-    return [region stringByAppendingString:@".bak"];
+    return @"kgvn.bak";
 }
 
 NSString* backupPath(void) {
