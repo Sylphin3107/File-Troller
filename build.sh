@@ -39,7 +39,7 @@ BIN="$APP/patchlq"
 # ---------------------------------------------
 # SIGN BINARY
 # ---------------------------------------------
-ldid -S../../ent.xml "$BIN" -Icom.34306.patchlq
+ldid -S../../ent.xml "$BIN" -Icom.sylphin3107.patchaov
 
 # ---------------------------------------------
 # APPLY CT_BYPASS
