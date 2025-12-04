@@ -137,18 +137,18 @@ BOOL setUserAndGroup(NSString *filePath) {
 NSString* appPath(void)
 {
     NSError* mcmError;
-    MCMAppContainer* appContainer = [MCMAppContainer containerWithIdentifier:@"com.garena.game.kgth" createIfNecessary:NO existed:NULL error:&mcmError];
+    MCMAppContainer* appContainer = [MCMAppContainer containerWithIdentifier:@"com.garena.game.kgtw" createIfNecessary:NO existed:NULL error:&mcmError];
     if(!appContainer) return nil;
     return appContainer.url.path;
 }
 
-NSString* kgth_aws(void)
+NSString* kgtw_aws(void)
 {
-    return [appPath() stringByAppendingPathComponent:@"kgth.app"];
+    return [appPath() stringByAppendingPathComponent:@"kgtw.app"];
 }
 
 NSString* backupFilename(void) {
-    return @"kgth.bak";
+    return @"kgtw.bak";
 }
 
 NSString* backupPath(void) {
@@ -292,7 +292,7 @@ int main(int argc, char *argv[]) {
     if (argc == 2 && strcmp(argv[1], "--patch") == 0) {
         @autoreleasepool {
             NSString *bundlePath = [[NSBundle mainBundle] bundlePath];
-            NSString *appBundlePath = kgth_aws();
+            NSString *appBundlePath = kgtw_aws();
 
             NSString *bakPath = backupPath();   // <-- Dùng biến chung
 
@@ -324,11 +324,11 @@ int main(int argc, char *argv[]) {
             // Set owner cho tất cả .dylib
             setAllOwnersForDylibsInFolder([appBundlePath stringByAppendingPathComponent:@"Frameworks/"]);
 
-            killall(@"kgth", true);
+            killall(@"kgtw", true);
         }
     }
     else if (argc == 2 && strcmp(argv[1], "--unpatch") == 0) {
-        NSString *appBundlePath = kgth_aws();
+        NSString *appBundlePath = kgtw_aws();
         NSString *bakPath = backupPath();
 
         if ([[NSFileManager defaultManager] fileExistsAtPath:bakPath]) {
@@ -342,7 +342,7 @@ int main(int argc, char *argv[]) {
                 [appBundlePath stringByAppendingString:@"/Frameworks/AWSCognito.framework/AWSCognito"]
             );
 
-            killall(@"kgth", true);
+            killall(@"kgtw", true);
         }
     }
     else {
